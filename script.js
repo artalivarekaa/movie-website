@@ -61,11 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function getMovies(url) {
+    main.innerHTML = "<p>Loading movies...</p>";
     const res = await fetch(url);
     const data= await res.json();
     displayMovies(data.results);
-    console.log(data.results);
+    // console.log(data.results);
 }
+
 
 function displayMovies(movies) {
     main.innerHTML = '';
@@ -143,5 +145,29 @@ function removeFromFavorites(id) {
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
 
-    showFavorites(); 
+    showFavorites();
 }
+
+
+$("#toggle-fav").click(function () {
+
+    $("#favorites").stop(true, true).fadeToggle(300, function () {
+
+        if ($("#favorites").is(":visible")) {
+            $("html, body").animate({
+                scrollTop: $("#favorites").offset().top
+            }, 400);
+        }
+
+    });
+
+    $(this).text(function (_, text) {
+        return text === "Show Favorites"
+            ? "Hide Favorites"
+            : "Show Favorites";
+    });
+
+    $("#favorites").toggleClass("active-favorites");
+});
+
+
