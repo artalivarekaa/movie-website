@@ -5,9 +5,61 @@ const SEARCH_URL = 'https://api.themoviedb.org/3/search/movie?api_key=e894865811
 const form = document.getElementById("form");
 const search = document.getElementById("search");
 const main = document.getElementById("main");
+const favoritesContainer = document.getElementById("favorites");
 
-// get movies
-getMovies(API_URL);
+function showFavorites() {
+    if (!favoritesContainer) return;
+
+    const favorites = getFavorites();
+
+    if (favorites.length === 0) {
+        favoritesContainer.innerHTML = `
+            <div class="empty-favorites">
+                <p>No favorites yet ❤️</p>
+                <span>Click the heart icon to add movies</span>
+            </div>
+        `;
+        return;
+    }
+
+    favoritesContainer.innerHTML = '';
+
+    favorites.forEach((movie) => {
+        //object destructuring
+        const { title, poster_path, vote_average, overview } = movie;
+
+        const favElement = document.createElement("div");
+        favElement.classList.add("movie");
+        // if poster path exists, use it; otherwise, use a placeholder image
+        favElement.innerHTML = `
+            <img src="${poster_path ? IMAGE_PATH + poster_path : 'https://via.placeholder.com/300x450?text=No+Image'}" />
+            <div class="movie-info">
+                <h3>${title}</h3>
+                <span class="${getClassesByRating(vote_average)}">${vote_average}</span>
+            </div>
+
+            <button class="remove-btn">❌</button>
+
+            <div class="overview">
+                <h3>Overview</h3>
+                ${overview}
+            </div>
+        `;
+
+        favoritesContainer.appendChild(favElement);
+
+        const removeBtn = favElement.querySelector(".remove-btn");
+        removeBtn.addEventListener("click", () => {
+            removeFromFavorites(movie.id);
+        });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    getMovies(API_URL);
+    showFavorites();
+});
+
 async function getMovies(url) {
     const res = await fetch(url);
     const data= await res.json();
@@ -40,7 +92,7 @@ function displayMovies(movies) {
         const favBtn = moviesElement.querySelector(".fav-btn");
         favBtn.addEventListener("click", () => {
             addToFavorites(movie);
-            alert("Added to favorites!");
+            // alert("Added to favorites!");
         });
 
         main.appendChild(moviesElement);
@@ -63,8 +115,13 @@ function getFavorites() {
 
 function addToFavorites(movie) {
     const favorites = getFavorites();
-    favorites.push(movie);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    // favorites.push(movie); avoiding adding duplicates by checking if the movie already exists in favorites
+    const exists = favorites.some(fav => fav.id === movie.id);
+    if (!exists) {
+        favorites.push(movie);
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        showFavorites();
+    }
 }
 
 form.addEventListener("submit", (e) => {
@@ -72,8 +129,19 @@ form.addEventListener("submit", (e) => {
     const searchValue=search.value;
     if(searchValue && searchValue !== "") {
         getMovies(SEARCH_URL + searchValue);
-        searchValue='';
+        search.value ='';
     }else {
         window.location.reload();
     }
 })
+
+
+function removeFromFavorites(id) {
+    let favorites = getFavorites();
+
+    favorites = favorites.filter(movie => movie.id !== id);
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+
+    showFavorites(); 
+}
