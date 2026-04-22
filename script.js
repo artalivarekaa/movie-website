@@ -58,12 +58,21 @@ function showFavorites() {
 document.addEventListener("DOMContentLoaded", () => {
     getMovies(API_URL);
     showFavorites();
+
+    $("#favorites").hide();
+    $("#toggle-fav").text("Show Favorites ❤️");
 });
 
 async function getMovies(url) {
     main.innerHTML = "<p>Loading movies...</p>";
     const res = await fetch(url);
     const data= await res.json();
+
+    if (!data.results.length) {
+        main.innerHTML = "<p>No movies found.</p>";
+        return;
+    }
+
     displayMovies(data.results);
     // console.log(data.results);
 }
@@ -151,23 +160,28 @@ function removeFromFavorites(id) {
 
 $("#toggle-fav").click(function () {
 
-    $("#favorites").stop(true, true).fadeToggle(300, function () {
+    const willShow = $("#favorites").is(":hidden");
 
-        if ($("#favorites").is(":visible")) {
-            $("html, body").animate({
-                scrollTop: $("#favorites").offset().top
-            }, 400);
-        }
+    $("#favorites").stop(true, true).fadeToggle(300);
 
-    });
-
-    $(this).text(function (_, text) {
-        return text === "Show Favorites"
-            ? "Hide Favorites"
-            : "Show Favorites";
-    });
+    $(this).text(willShow ? "Hide Favorites ❤️" : "Show Favorites ❤️");
 
     $("#favorites").toggleClass("active-favorites");
+
+    if (willShow) {
+        $("html, body").animate({
+            scrollTop: $("#favorites").offset().top
+        }, 400);
+    }
 });
 
 
+$("#theme-toggle").click(function () {
+    $("body").toggleClass("dark");
+
+    $(this).text(function (_, text) {
+        return text === "Switch to Dark Mode 🌙"
+            ? "Switch to Light Mode ☀️"
+            : "Switch to Dark Mode 🌙";
+    });
+});

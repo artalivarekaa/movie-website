@@ -3,26 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Movie website</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <header>
-    <form id="form">
-      <input type="text" id="search" class="search" placeholder="Search...">
-    </form>
+    <div class="header-container">
+      <form id="form">
+        <input type="text" id="search" class="search" placeholder="Search...">
+      </form>
+      <div class="header-buttons">
+        <button id="theme-toggle">Switch to Dark Mode 🌙</button>
+        <button id="toggle-fav">Show Favorites ❤️</button>
+      </div>
+    </div>    
   </header>
 
   <main>
-    <button id="toggle-fav">Toggle Favorites</button>
-    <section>
-      <h2 class="section-title">Favorites</h2>
-      <div id="favorites"></div>
-    </section>
     <section>
       <h2 class="section-title">All Movies</h2>
       <div id="main"></div>
+    </section>
+    <section>
+      <h2 class="section-title">Favorites</h2>
+      <div id="favorites"></div>
     </section>
   </main>
 
