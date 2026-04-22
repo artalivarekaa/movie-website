@@ -118,3 +118,7 @@ No installation or setup required.
 
 ## Conclusion
 This project demonstrates skills in frontend development, API integration, responsive design, and interactive UI creation using modern web technologies.
+
+
+## Live Demo
+ https://artalivarekaa.github.io/movie-website/
